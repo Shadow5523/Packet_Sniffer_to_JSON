@@ -1,9 +1,3 @@
-//#include<stdio.h>
-//#include<stdlib.h>
-//#include<string.h>
-//#include<netinet/ip.h>
-//#include<arpa/inet.h>
-//#include "ether.h"
 
 void write_ip_header(unsigned char *buffer,
 		     int size,
