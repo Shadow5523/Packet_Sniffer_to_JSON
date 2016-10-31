@@ -80,15 +80,8 @@ void ProcessPacket(unsigned char* buffer, int size){
   switch(iph -> protocol){
   case 1:  //ICMP Protocol
     ++icmp;
-<<<<<<< HEAD
-<<<<<<< HEAD
     //write_icmp_header(buffer, size, source, dest, logfile);
-=======
-    write_tcp_header(buffer, size, source, dest, logfile);
->>>>>>> ad6fd9ec88cbcc9476a62f07be7bc788c1a43f7d
-=======
-    write_tcp_header(buffer, size, source, dest, logfile);
->>>>>>> ad6fd9ec88cbcc9476a62f07be7bc788c1a43f7d
+    break;
 
   case 2:  //IGMP Protocol
     ++igmp;
