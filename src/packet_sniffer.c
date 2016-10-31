@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
   unsigned char *buffer = (unsigned char *)malloc(65536);    //65536バイトのメモリを確保
 
   if((logfile = fopen("log.json", "w")) == NULL)
-    printf("unable to create file");
+    error("unable to create file");
 
    if((sock_raw = socket(AF_PACKET, SOCK_RAW,  htons(ETH_P_ALL))) == -1)
     error("socket error");
