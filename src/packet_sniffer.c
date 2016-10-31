@@ -14,6 +14,7 @@
 #include "write_header/ip.h"
 #include "write_header/tcp.h"
 #include "write_header/udp.h"
+#include "write_header/icmp.h"
 
 void ProcessPacket(unsigned char*, int);
 void error(char *);
