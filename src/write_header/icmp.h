@@ -1,5 +1,5 @@
 
-void write_tcp_header(unsigned char *buffer,
+void write_icmp_header(unsigned char *buffer,
 		      int size,
 		      struct sockaddr_in source,
 		      struct sockaddr_in dest, 
