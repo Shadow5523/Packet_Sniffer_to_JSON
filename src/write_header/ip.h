@@ -17,7 +17,6 @@ void write_ip_header(unsigned char *buffer,
 
   memset(&dest, 0, sizeof(dest));
   dest.sin_addr.s_addr = iph -> daddr;
-
   
   fprintf(logfile, "\"ip\":{");
   fprintf(logfile, "\"version\":\"%d\",", (unsigned int)iph->version);
