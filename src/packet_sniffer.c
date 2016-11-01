@@ -79,28 +79,28 @@ void ProcessPacket(unsigned char* buffer, int size){
   ++total;
 
   switch(iph -> protocol){
-  case 1:  //ICMP Protocol
-    ++icmp;
-    write_icmp_header(buffer, size, source, dest, logfile);
-    break;
+    case 1:  //ICMP Protocol
+      ++icmp;
+      write_icmp_header(buffer, size, source, dest, logfile);
+      break;
 
-  case 2:  //IGMP Protocol
-    ++igmp;
-    break;
+    case 2:  //IGMP Protocol
+      ++igmp;
+      break;
 
-  case 6:  //TCP  Protocol
-    ++tcp;
-    write_tcp_header(buffer, size, source, dest, logfile);
-    break;
+    case 6:  //TCP  Protocol
+      ++tcp;
+      write_tcp_header(buffer, size, source, dest, logfile);
+      break;
 
-  case 17: //UDP  Protocol
-    ++udp;
-    write_udp_header(buffer, size, source, dest, logfile);
-    break;
+    case 17: //UDP  Protocol
+      ++udp;
+      write_udp_header(buffer, size, source, dest, logfile);
+      break;
 
-  default:
-    ++others;
-    break;
+    default:
+      ++others;
+      break;
     
   }
   printf("TCP : %d UDP : %d ICMP : %d Others : %d Total %d\n", tcp, udp, icmp, igmp, total);
