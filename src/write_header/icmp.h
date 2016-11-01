@@ -18,12 +18,18 @@ void write_icmp_header(unsigned char *buffer,
   fprintf(logfile, "\"icmp\":{");
   fprintf(logfile, "\"type\":\"%d\",", (unsigned int)icmph -> type);
   fprintf(logfile, "\"code\":\"%d\",", (unsigned int)icmph -> code);
-  if((unsigned int)icmph -> type == ICMP_REDIRECT){
-    fprintf(logfile, "\"check\":\"%d\",", ntohs(icmph -> checksum));
-    fprintf(logfile, "\"gateway\":\"%s\"", inet_ntoa(gateway.sin_addr));
-    
-  }else{
-    fprintf(logfile, "\"check\":\"%d\"", ntohs(icmph -> checksum));
+  fprintf(logfile, "\"check\":\"%d\",", ntohs(icmph -> checksum));
+  
+  switch((unsigned int)icmph -> type){  
+    case ICMP_ECHOREPLY:
+    case ICMP_ECHO:
+      fprintf(logfile, "\"id\":\"%d\",", ntohs(icmph -> un.echo.id));
+      fprintf(logfile, "\"seq\":\"%d\"", ntohs(icmph -> un.echo.sequence));
+      break;
+
+    case ICMP_REDIRECT:
+      fprintf(logfile, "\"gateway\":\"%s\"", inet_ntoa(gateway.sin_addr));
+      break;
     
   }
     
