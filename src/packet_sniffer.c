@@ -18,6 +18,7 @@
 
 void ProcessPacket(unsigned char*, int);
 void error(char *);
+void capture(int, unsigned char *, int);
 
 FILE *logfile;
 int tcp = 0,
@@ -28,15 +29,14 @@ int tcp = 0,
     total = 0,
     i = 0,
     j = 0,
-    sock_raw = 0,
-    count = 0;
+    sock_raw = 0;
 
 
 struct sockaddr_in source, dest;
 
 int main(int argc, char *argv[]){
-  int saddr_size, data_size;
-  struct sockaddr saddr, in;
+  int count = 0;
+  int count_input = atoi(argv[1]);
 
   unsigned char *buffer = (unsigned char *)malloc(65536);    //65536バイトのメモリを確保
 
@@ -49,23 +49,11 @@ int main(int argc, char *argv[]){
   fprintf(logfile, "{");
 
   while(count < atoi(argv[1])){
-    fprintf(logfile, "\"%d\":{", (count + 1));
-    saddr_size = sizeof saddr;
-    if((data_size = recvfrom(sock_raw, buffer, 65536, 0, &saddr, (socklen_t *)&saddr_size)) == -1)
-      error("recvfrom() error");
-
-    ProcessPacket(buffer, data_size);
-
-    ++count;
-    if(count == atoi(argv[1])){
-      fprintf(logfile, "}");
-      
-    }else{
-      fprintf(logfile, "},");
-      
-    }
-  
-  }close(sock_raw);
+    capture(count, buffer, count_input);
+    count++;
+    
+  }
+  close(sock_raw);
   fprintf(logfile, "}");
    
 }
@@ -116,3 +104,28 @@ void error(char *msg){
   exit(1);
   
 }
+
+
+
+
+void capture(int count, unsigned char *buffer, int count_input){
+  struct sockaddr saddr, in;
+  int saddr_size, data_size;
+  
+  fprintf(logfile, "\"%d\":{", (count + 1));
+  saddr_size = sizeof saddr;
+  if((data_size = recvfrom(sock_raw, buffer, 65536, 0, &saddr, (socklen_t *)&saddr_size)) == -1)
+    error("recvfrom() error");
+
+  ProcessPacket(buffer, data_size);
+
+  if(count == (count_input - 1)){
+    fprintf(logfile, "}");
+
+  }else{
+    fprintf(logfile, "},");
+
+  }
+
+}
+
