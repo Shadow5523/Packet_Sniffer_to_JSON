@@ -9,6 +9,8 @@
 #include<netinet/udp.h>
 #include<arpa/inet.h>
 #include<errno.h>
+#include<unistd.h>
+#include<time.h>
 
 #include "write_header/ether.h"
 #include "write_header/ip.h"
@@ -18,7 +20,7 @@
 
 void ProcessPacket(unsigned char*, int);
 void error(char *);
-void capture(int, unsigned char *, int);
+void capture(unsigned char *);
 
 FILE *logfile;
 int tcp = 0,
@@ -29,29 +31,52 @@ int tcp = 0,
     total = 0,
     i = 0,
     j = 0,
-    sock_raw = 0;
+    sock_raw = 0,
+    count = 0,
+    count_input = 0,
+    status = 0;
 
 
 struct sockaddr_in source, dest;
 
 int main(int argc, char *argv[]){
-  int count = 0;
-  int count_input = atoi(argv[1]);
+  int res = 0;
+  clock_t time = 0;
 
   unsigned char *buffer = (unsigned char *)malloc(65536);    //65536バイトのメモリを確保
 
   if((logfile = fopen("log.json", "w")) == NULL)
     error("unable to create file");
 
-   if((sock_raw = socket(AF_PACKET, SOCK_RAW,  htons(ETH_P_ALL))) == -1)
+  if((sock_raw = socket(AF_PACKET, SOCK_RAW,  htons(ETH_P_ALL))) == -1)
     error("socket error");
 
   fprintf(logfile, "{");
-
-  while(count < atoi(argv[1])){
-    capture(count, buffer, count_input);
-    count++;
+  
+  while((res = getopt(argc, argv, "c:t:")) != -1){
+    switch(res){
+      case 'c':
+	status = 'c';
+	count_input = atoi(optarg);
+	while(count < atoi(optarg)){
+	  capture(buffer);
+	  count++;
     
+	}
+	break;
+
+      case 't':
+	while((clock() - time) < (CLOCKS_PER_SEC * atoi(optarg))){
+	  status = 't';
+	  clock();
+	  capture(buffer);
+	  count++;
+
+	}
+	fprintf(logfile, "\"null\":{}");
+	break;
+      
+    }
   }
   close(sock_raw);
   fprintf(logfile, "}");
@@ -108,24 +133,29 @@ void error(char *msg){
 
 
 
-void capture(int count, unsigned char *buffer, int count_input){
+void capture(unsigned char *buffer){
   struct sockaddr saddr, in;
   int saddr_size, data_size;
-  
   fprintf(logfile, "\"%d\":{", (count + 1));
   saddr_size = sizeof saddr;
   if((data_size = recvfrom(sock_raw, buffer, 65536, 0, &saddr, (socklen_t *)&saddr_size)) == -1)
     error("recvfrom() error");
 
   ProcessPacket(buffer, data_size);
+  switch(status){
+    case 'c':
+      if(count == (count_input - 1)){
+	fprintf(logfile, "}");
+	
+      }else{
+	fprintf(logfile, "},");
 
-  if(count == (count_input - 1)){
-    fprintf(logfile, "}");
+      }
+      break;
 
-  }else{
-    fprintf(logfile, "},");
-
+    case 't':
+      fprintf(logfile, "},");
+      break;
   }
-
 }
 
