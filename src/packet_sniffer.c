@@ -52,6 +52,9 @@ int main(int argc, char *argv[]){
     error("socket error");
 
   fprintf(logfile, "{");
+
+  if(argc > 3 || argc == 1)
+    error("error");
   
   while((res = getopt(argc, argv, "c:t:")) != -1){
     switch(res){
@@ -75,6 +78,9 @@ int main(int argc, char *argv[]){
 	}
 	fprintf(logfile, "\"null\":{}");
 	break;
+
+	//default:
+	//error("Not option!");
       
     }
   }
