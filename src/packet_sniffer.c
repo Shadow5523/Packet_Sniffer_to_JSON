@@ -63,7 +63,7 @@ int main(int argc, char *argv[]){
 	count_input = atoi(optarg);
 	while(count < atoi(optarg)){
 	  capture(buffer);
-	  count++;
+	  ++count;
     
 	}
 	break;
@@ -73,14 +73,11 @@ int main(int argc, char *argv[]){
 	  status = 't';
 	  clock();
 	  capture(buffer);
-	  count++;
+	  ++count;
 
 	}
 	fprintf(logfile, "\"null\":{}");
 	break;
-
-	//default:
-	//error("Not option!");
       
     }
   }
